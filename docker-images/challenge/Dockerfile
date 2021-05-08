@@ -15,7 +15,7 @@ RUN apk add --no-cache $BUILD_DEPENDENCIES \
 #
 FROM alpine:3.13
 
-RUN apk add --no-cache libstdc++ libnl3 protobuf socat
+RUN apk add --no-cache libstdc++ shadow-uidmap libnl3 protobuf socat
 
 RUN adduser --no-create-home --uid 1337 pctf
 
