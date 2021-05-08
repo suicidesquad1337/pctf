@@ -3,3 +3,7 @@
 [[package]]
 name = "pctf"
 version = "0.1.0"
+
+[[package]]
+name = "pctf-supervisor"
+version = "0.1.0"
