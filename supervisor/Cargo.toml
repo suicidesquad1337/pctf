@@ -5,3 +5,4 @@ authors = ["Valentin B. <valentin.be@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
+bollard = "0.10"
