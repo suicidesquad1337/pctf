@@ -6,4 +6,7 @@ use serde::Deserialize;
 pub struct Config {
     /// The database the server connects to
     pub db_uri: String,
+    #[serde(default)]
+    /// If the tracing extension should be enabled
+    pub tracing: bool,
 }

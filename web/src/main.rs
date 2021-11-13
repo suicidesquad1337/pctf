@@ -1,5 +1,6 @@
 use async_graphql::{
     dataloader::DataLoader as DL,
+    extensions::ApolloTracing,
     http::{playground_source, GraphQLPlaygroundConfig},
     EmptySubscription,
 };
@@ -63,8 +64,15 @@ async fn rocket() -> _ {
         .data(DL::new(CreatedAtLoaderByID::new(db.clone())))
         .data(DL::new(ChallengeTypeLoaderByID::new(db.clone())))
         .data(DL::new(ChallengeHintsLoaderByID::new(db.clone())))
-        .data(db.clone())
-        .finish();
+        .data(db.clone());
+
+    // enable tracing if wanted
+    let schema = if config.tracing {
+        schema.extension(ApolloTracing)
+    } else {
+        schema
+    }
+    .finish();
 
     rocket::build()
         .manage(schema)
