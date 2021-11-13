@@ -55,11 +55,13 @@ async fn rocket() -> _ {
     let schema = Schema::build(Queries::default(), Mutations::default(), EmptySubscription)
         // register the different data loaders
         .data(DL::new(ChallengeLoaderByName::new(db.clone())))
+        .data(DL::new(ChallengeNameLoaderByID::new(db.clone())))
         .data(DL::new(ShortDescriptionLoaderByID::new(db.clone())))
         .data(DL::new(LongDescriptionLoaderByID::new(db.clone())))
         .data(DL::new(IsActiveLoaderByID::new(db.clone())))
         .data(DL::new(CreatedAtLoaderByID::new(db.clone())))
         .data(DL::new(ChallengeTypeLoaderByID::new(db.clone())))
+        .data(DL::new(ChallengeHintsLoaderByID::new(db.clone())))
         .finish();
 
     rocket::build()

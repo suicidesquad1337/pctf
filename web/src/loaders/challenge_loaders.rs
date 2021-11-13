@@ -13,7 +13,7 @@ basic_loader!(
 );
 
 basic_loader!(
-    ChallgeNameLoaderByID,
+    ChallengeNameLoaderByID,
     Uuid,
     String,
     r#"SELECT "id" AS ka, "name" AS val FROM ctf_challenges WHERE "id" = ANY($1)"#
