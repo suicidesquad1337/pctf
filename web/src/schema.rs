@@ -4,7 +4,9 @@ use async_graphql::{EmptySubscription, MergedObject};
 pub type Schema = async_graphql::Schema<Queries, Mutations, EmptySubscription>;
 
 #[derive(MergedObject, Default)]
-pub struct Queries();
+/// This struct merges all queries
+pub struct Queries;
 
 #[derive(MergedObject, Default)]
-pub struct Mutations();
+/// This struct mrges all mutations
+pub struct Mutations;

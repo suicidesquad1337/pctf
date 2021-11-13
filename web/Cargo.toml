@@ -7,5 +7,6 @@ edition = "2021"
 
 [dependencies]
 rocket = "0.5.0-rc.1"
-async-graphql = "2.11.3"
+async-graphql = { version = "2.11.3", features = ["uuid", "dataloader"] }
 async-graphql-rocket = "2.11.3"
+uuid = { version = "0.8.2", features = ["serde"] }

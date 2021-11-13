@@ -9,6 +9,8 @@ use schema::{Mutations, Queries, Schema};
 #[macro_use]
 extern crate rocket;
 
+pub mod challenge;
+pub mod node;
 pub mod schema;
 
 #[post("/graphql", data = "<request>", format = "application/json")]
@@ -26,7 +28,8 @@ fn graphql_playground() -> Html<String> {
 #[launch]
 fn rocket() -> _ {
     // generate the schema
-    let schema = Schema::build(Queries(), Mutations(), EmptySubscription).finish();
+    let schema =
+        Schema::build(Queries::default(), Mutations::default(), EmptySubscription).finish();
 
     rocket::build()
         .manage(schema)
