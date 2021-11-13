@@ -1,4 +1,4 @@
-use async_graphql::{dataloader::DataLoader as DL, Context, Object, Result};
+use async_graphql::{dataloader::DataLoader as DL, Context, Object, Result, ID};
 
 use super::Challenge;
 use crate::loaders::ChallengeLoaderByName;
@@ -19,5 +19,16 @@ impl ChallengeQueries {
             .data_unchecked::<DL<ChallengeLoaderByName>>()
             .load_one(name)
             .await?)
+    }
+}
+
+#[non_exhaustive]
+#[derive(Debug, Default)]
+pub struct ChallengeMutations;
+
+#[Object]
+impl ChallengeMutations {
+    async fn submit_flag(&self, _flag: String, _challenge: ID) -> Option<String> {
+        todo!("send flag to supervisor")
     }
 }
