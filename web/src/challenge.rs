@@ -6,6 +6,11 @@ use async_graphql::{dataloader::DataLoader as DL, Context, Enum, Object, Result,
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
+mod queries;
+
+#[doc(inline)]
+pub use queries::*;
+
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 /// A ctf challenge
