@@ -63,6 +63,7 @@ async fn rocket() -> _ {
         .data(DL::new(CreatedAtLoaderByID::new(db.clone())))
         .data(DL::new(ChallengeTypeLoaderByID::new(db.clone())))
         .data(DL::new(ChallengeHintsLoaderByID::new(db.clone())))
+        .data(db.clone())
         .finish();
 
     rocket::build()
