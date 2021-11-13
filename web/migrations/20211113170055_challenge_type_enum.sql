@@ -1,6 +1,6 @@
 CREATE TYPE challenge_type AS ENUM (
-    'pwn',
-    'web',
-    'crypto',
-    'reversing'
+    'Pwn',
+    'Web',
+    'Crypto',
+    'Reversing'
 )
