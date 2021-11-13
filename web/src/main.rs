@@ -1,4 +1,5 @@
 use async_graphql::{
+    dataloader::DataLoader as DL,
     http::{playground_source, GraphQLPlaygroundConfig},
     EmptySubscription,
 };
@@ -15,6 +16,7 @@ mod config;
 pub mod loaders;
 pub mod node;
 pub mod schema;
+use loaders::*;
 
 #[doc(inline)]
 pub use config::Config;
@@ -33,10 +35,6 @@ fn graphql_playground() -> Html<String> {
 
 #[launch]
 async fn rocket() -> _ {
-    // generate the schema
-    let schema =
-        Schema::build(Queries::default(), Mutations::default(), EmptySubscription).finish();
-
     // create config from Rocket.toml or env
     let config = RocketConfig::figment()
         // merge with prefixed env variables
@@ -52,6 +50,17 @@ async fn rocket() -> _ {
         .run(&db)
         .await
         .expect("cannot run database migrations");
+
+    // generate the schema
+    let schema = Schema::build(Queries::default(), Mutations::default(), EmptySubscription)
+        // register the different data loaders
+        .data(DL::new(ChallengeLoaderByName::new(db.clone())))
+        .data(DL::new(ShortDescriptionLoaderByID::new(db.clone())))
+        .data(DL::new(LongDescriptionLoaderByID::new(db.clone())))
+        .data(DL::new(IsActiveLoaderByID::new(db.clone())))
+        .data(DL::new(CreatedAtLoaderByID::new(db.clone())))
+        .data(DL::new(ChallengeTypeLoaderByID::new(db.clone())))
+        .finish();
 
     rocket::build()
         .manage(schema)
