@@ -5,6 +5,14 @@ use crate::{
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
+// used to check if a challenge exists in the database
+basic_loader!(
+    ChallengeLoaderByID,
+    Uuid,
+    Challenge,
+    r#"SELECT "id" AS ka, "id" AS val FROM ctf_challenges WHERE "id" = ANY($1)"#
+);
+
 basic_loader!(
     ChallengeLoaderByName,
     String,
