@@ -1,4 +1,9 @@
-use async_graphql::{Enum, Object, ID};
+use crate::loaders::{
+    ChallengeHintsLoaderByID, ChallengeNameLoaderByID, ChallengeTypeLoaderByID,
+    CreatedAtLoaderByID, IsActiveLoaderByID, LongDescriptionLoaderByID, ShortDescriptionLoaderByID,
+};
+use async_graphql::{dataloader::DataLoader as DL, Context, Enum, Object, Result, ID};
+use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 #[non_exhaustive]
@@ -15,12 +20,70 @@ impl Challenge {
         self.id.into()
     }
 
-    /// Returns the type of the challenge
+    /// The name of the challenge
+    pub async fn name(&self, ctx: &Context<'_>) -> Result<String> {
+        Ok(ctx
+            .data_unchecked::<DL<ChallengeNameLoaderByID>>()
+            .load_one(self.id)
+            .await?
+            .unwrap())
+    }
+
+    /// A short description for the challenge
+    pub async fn short_description(&self, ctx: &Context<'_>) -> Result<Option<String>> {
+        Ok(ctx
+            .data_unchecked::<DL<ShortDescriptionLoaderByID>>()
+            .load_one(self.id)
+            .await?
+            .unwrap())
+    }
+
+    /// A long(er) description for the challenge
+    pub async fn description(&self, ctx: &Context<'_>) -> Result<Option<String>> {
+        Ok(ctx
+            .data_unchecked::<DL<LongDescriptionLoaderByID>>()
+            .load_one(self.id)
+            .await?
+            .unwrap())
+    }
+
+    /// Hints that may help/spoiler the challenge
+    pub async fn hints(&self, ctx: &Context<'_>) -> Result<Option<String>> {
+        Ok(ctx
+            .data_unchecked::<DL<ChallengeHintsLoaderByID>>()
+            .load_one(self.id)
+            .await?
+            .unwrap())
+    }
+    /// If the challenge is currently playable (e.g. if the challenge server
+    /// is online or not)
+    pub async fn is_active(&self, ctx: &Context<'_>) -> Result<bool> {
+        Ok(ctx
+            .data_unchecked::<DL<IsActiveLoaderByID>>()
+            .load_one(self.id)
+            .await?
+            .unwrap())
+    }
+
+    /// The date and time the challenge was published
+    pub async fn created_at(&self, ctx: &Context<'_>) -> Result<DateTime<Utc>> {
+        Ok(ctx
+            .data_unchecked::<DL<CreatedAtLoaderByID>>()
+            .load_one(self.id)
+            .await?
+            .unwrap())
+    }
+
+    /// The type of the challenge
     // `type` is a reserved key word so raw identifiers are required. If you
     // want, you could also call this function something like `typ` and use
     // `graphql(name = "type")` to rename it in the graphql spec
-    pub async fn r#type(&self) -> ChallengeType {
-        ChallengeType::Reversing
+    pub async fn r#type(&self, ctx: &Context<'_>) -> Result<ChallengeType> {
+        Ok(ctx
+            .data_unchecked::<DL<ChallengeTypeLoaderByID>>()
+            .load_one(self.id)
+            .await?
+            .unwrap())
     }
 }
 
