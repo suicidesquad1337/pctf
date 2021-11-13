@@ -53,3 +53,10 @@ basic_loader!(
     ChallengeType,
     r#"SELECT "id" AS ka, "challenge_type" AS "val!: ChallengeType" FROM ctf_challenges WHERE "id" = ANY($1)"#
 );
+
+basic_loader!(
+    ChallengeHintsLoaderByID,
+    Uuid,
+    Option<String>,
+    r#"SELECT "id" AS ka, "hints" AS "val" FROM ctf_challenges WHERE "id" = ANY($1)"#
+);
