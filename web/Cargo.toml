@@ -12,3 +12,6 @@ async-graphql-rocket = "2.11.3"
 uuid = { version = "0.8.2", features = ["serde"] }
 sqlx = { version = "0.5.9", features = ["chrono", "macros", "migrate", "offline", "postgres", "runtime-tokio-rustls", "uuid"] }
 serde =  { version = "1.0.130", features = ["derive"] }
+async-trait = "0.1.51"
+futures = "0.3.17"
+chrono = { version = "0.4.19", features = ["serde"] }

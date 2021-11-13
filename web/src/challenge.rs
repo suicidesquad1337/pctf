@@ -2,7 +2,7 @@ use async_graphql::{Enum, Object, ID};
 use uuid::Uuid;
 
 #[non_exhaustive]
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 /// A ctf challenge
 pub struct Challenge {
     /// The unique identifier of this session used as the primary key
@@ -24,8 +24,14 @@ impl Challenge {
     }
 }
 
+impl From<Uuid> for Challenge {
+    fn from(id: Uuid) -> Self {
+        Self { id }
+    }
+}
+
 #[non_exhaustive]
-#[derive(Enum, Clone, Copy, PartialEq, Eq)]
+#[derive(Enum, Clone, Copy, PartialEq, Eq, sqlx::Type, Debug)]
 /// The type of a ctf [`Challenge`]
 pub enum ChallengeType {
     Pwn,

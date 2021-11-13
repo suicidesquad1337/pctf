@@ -12,6 +12,7 @@ extern crate rocket;
 
 pub mod challenge;
 mod config;
+pub mod loaders;
 pub mod node;
 pub mod schema;
 
