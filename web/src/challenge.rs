@@ -19,7 +19,7 @@ pub struct Challenge {
     id: Uuid,
 }
 
-#[Object]
+#[Object(cache_control(max_age = 300))]
 impl Challenge {
     pub async fn id(&self) -> ID {
         self.id.into()
