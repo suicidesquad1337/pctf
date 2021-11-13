@@ -13,6 +13,13 @@ basic_loader!(
 );
 
 basic_loader!(
+    ChallgeNameLoaderByID,
+    Uuid,
+    String,
+    r#"SELECT "id" AS ka, "name" AS val FROM ctf_challenges WHERE "id" = ANY($1)"#
+);
+
+basic_loader!(
     ShortDescriptionLoaderByID,
     Uuid,
     Option<String>,
