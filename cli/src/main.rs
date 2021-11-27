@@ -1,12 +1,21 @@
 use anyhow::Result;
-use auth::DeviceAuthorizationRequest;
 use clap::Parser;
 use lazy_static::lazy_static;
 use reqwest::blocking::Client;
-mod auth;
 
-#[macro_use]
-extern crate anyhow;
+use crate::oauth2::DeviceAuthorizationRequest;
+
+mod oauth2;
+
+// Constaints that allow compiling with cargo-install
+/// The host/domian used for openid connect discovery
+// const OIDC_HOST: &str = "https://pwnhub-dev.eu.auth0.com/";
+/// The id of the oidc client
+pub const CLIENT_ID: &str = "XOUgCp9H7k0rkRknnAf8ID6Fz4skI3Wi";
+// pub const OAUTH_AUTH: &str = "https://pwnhub-dev.eu.auth0.com/authorize";
+pub const DEVICE_AUTH: &str = "https://pwnhub-dev.eu.auth0.com/oauth/device/code";
+pub const OAUTH_TOKEN: &str = "https://pwnhub-dev.eu.auth0.com/oauth/token";
+pub const AUDIENCE: &str = "http://localhost:8000";
 
 #[derive(Parser)]
 enum Commands {
@@ -28,8 +37,9 @@ fn main() -> Result<()> {
                 "Please follow this link: {}\nYour code is {}",
                 request.verification_uri_complete, request.user_code
             );
-            println!("Waiting for verification ...");
-            println!("Done: {}", request.request(&CLIENT)?);
+            println!("Waiting ...");
+            let response = request.poll(&CLIENT)?;
+            println!("Done!\nYour access token is {}", response.access_token);
         }
     };
     Ok(())
