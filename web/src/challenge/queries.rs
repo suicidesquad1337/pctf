@@ -28,7 +28,7 @@ impl ChallengeQueries {
     /// return all challenges (no pagination yet)
     async fn challenges(&self, ctx: &Context<'_>) -> Result<Vec<Challenge>> {
         let pool = ctx.data_unchecked::<PgPool>();
-        let challenges: Vec<_> = sqlx::query!(r#"SELECT "id" FROM ctf_challenges"#)
+        let challenges: Vec<_> = sqlx::query!(r#"SELECT "id" FROM challenges"#)
             .fetch(pool)
             .map_ok(|c| Challenge::from(c.id))
             .try_collect()
@@ -44,6 +44,6 @@ pub struct ChallengeMutations;
 #[Object]
 impl ChallengeMutations {
     async fn submit_flag(&self, _flag: String, _challenge: ID) -> Option<String> {
-        todo!("send flag to supervisor")
+        None
     }
 }
