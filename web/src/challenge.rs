@@ -100,6 +100,7 @@ impl From<Uuid> for Challenge {
 
 #[non_exhaustive]
 #[derive(Enum, Clone, Copy, PartialEq, Eq, sqlx::Type, Debug)]
+#[sqlx(rename_all = "snake_case")]
 /// The type of a ctf [`Challenge`]
 pub enum ChallengeType {
     Pwn,
