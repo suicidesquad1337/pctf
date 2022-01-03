@@ -1,3 +1,0 @@
-ALTER TABLE ctf_challenges
-ADD COLUMN challenge_type CHALLENGE_TYPE NOT NULL,
-ADD COLUMN repo_url TEXT NOT NULL;
