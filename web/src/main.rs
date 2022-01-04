@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use async_graphql::{
     dataloader::DataLoader as DL,
     extensions::ApolloTracing,
@@ -52,18 +54,23 @@ async fn rocket() -> _ {
         .await
         .expect("cannot run database migrations");
 
+    // the dataloader used by the the front loaders
+    let s_l = Arc::new(DL::new(ChallengeLoader::new(db.clone())));
     // generate the schema
     let schema = Schema::build(Queries::default(), Mutations::default(), EmptySubscription)
         // register the different data loaders
         .data(DL::new(ChallengeLoaderByID::new(db.clone())))
-        .data(DL::new(ChallengeLoaderByName::new(db.clone())))
-        .data(DL::new(ChallengeNameLoaderByID::new(db.clone())))
-        .data(DL::new(ShortDescriptionLoaderByID::new(db.clone())))
-        .data(DL::new(LongDescriptionLoaderByID::new(db.clone())))
-        .data(DL::new(IsActiveLoaderByID::new(db.clone())))
-        .data(DL::new(CreatedAtLoaderByID::new(db.clone())))
-        .data(DL::new(ChallengeTypeLoaderByID::new(db.clone())))
-        .data(DL::new(ChallengeHintsLoaderByID::new(db.clone())))
+        .data(DL::new(ChallengeNameLoaderByID::new(s_l.clone())))
+        .data(DL::new(ChallengeTypeLoaderByID::new(s_l.clone())))
+        .data(DL::new(ChallengeShortDescriptionLoaderByID::new(
+            s_l.clone(),
+        )))
+        .data(DL::new(ChallengeLongDescriptionLoaderByID::new(
+            s_l.clone(),
+        )))
+        .data(DL::new(ChallengeHintsLoaderByID::new(s_l.clone())))
+        .data(DL::new(ChallengeCreatedAtLoaderByID::new(s_l.clone())))
+        .data(DL::new(ChallengeActiveLoaderByID::new(s_l)))
         .data(db.clone());
 
     // enable tracing if wanted
