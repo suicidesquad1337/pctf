@@ -1,6 +1,9 @@
+use std::ops::{Deref, DerefMut};
+
 use crate::loaders::{
-    ChallengeHintsLoaderByID, ChallengeNameLoaderByID, ChallengeTypeLoaderByID,
-    CreatedAtLoaderByID, IsActiveLoaderByID, LongDescriptionLoaderByID, ShortDescriptionLoaderByID,
+    ChallengeActiveLoaderByID, ChallengeCreatedAtLoaderByID, ChallengeHintsLoaderByID,
+    ChallengeLongDescriptionLoaderByID as LongDescriptionLoaderByID, ChallengeNameLoaderByID,
+    ChallengeShortDescriptionLoaderByID as ShortDescriptionLoaderByID, ChallengeTypeLoaderByID,
 };
 use async_graphql::{dataloader::DataLoader as DL, Context, Enum, Object, Result, ID};
 use chrono::{DateTime, Utc};
@@ -12,10 +15,10 @@ mod queries;
 pub use queries::*;
 
 #[non_exhaustive]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 /// A ctf challenge
 pub struct Challenge {
-    /// The unique identifier of this session used as the primary key
+    /// The unique identifier of this challenge used as the primary key
     id: Uuid,
 }
 
@@ -39,8 +42,7 @@ impl Challenge {
         Ok(ctx
             .data_unchecked::<DL<ShortDescriptionLoaderByID>>()
             .load_one(self.id)
-            .await?
-            .unwrap())
+            .await?)
     }
 
     /// A long(er) description for the challenge
@@ -48,8 +50,7 @@ impl Challenge {
         Ok(ctx
             .data_unchecked::<DL<LongDescriptionLoaderByID>>()
             .load_one(self.id)
-            .await?
-            .unwrap())
+            .await?)
     }
 
     /// Hints that may help/spoiler the challenge
@@ -57,14 +58,13 @@ impl Challenge {
         Ok(ctx
             .data_unchecked::<DL<ChallengeHintsLoaderByID>>()
             .load_one(self.id)
-            .await?
-            .unwrap())
+            .await?)
     }
     /// If the challenge is currently playable (e.g. if the challenge server
     /// is online or not)
     pub async fn is_active(&self, ctx: &Context<'_>) -> Result<bool> {
         Ok(ctx
-            .data_unchecked::<DL<IsActiveLoaderByID>>()
+            .data_unchecked::<DL<ChallengeActiveLoaderByID>>()
             .load_one(self.id)
             .await?
             .unwrap())
@@ -73,7 +73,7 @@ impl Challenge {
     /// The date and time the challenge was published
     pub async fn created_at(&self, ctx: &Context<'_>) -> Result<DateTime<Utc>> {
         Ok(ctx
-            .data_unchecked::<DL<CreatedAtLoaderByID>>()
+            .data_unchecked::<DL<ChallengeCreatedAtLoaderByID>>()
             .load_one(self.id)
             .await?
             .unwrap())
@@ -98,8 +98,21 @@ impl From<Uuid> for Challenge {
     }
 }
 
+impl Deref for Challenge {
+    type Target = Uuid;
+    fn deref(&self) -> &Self::Target {
+        &self.id
+    }
+}
+
+impl DerefMut for Challenge {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.id
+    }
+}
 #[non_exhaustive]
 #[derive(Enum, Clone, Copy, PartialEq, Eq, sqlx::Type, Debug)]
+#[sqlx(rename_all = "snake_case", type_name = "challenge_type")]
 /// The type of a ctf [`Challenge`]
 pub enum ChallengeType {
     Pwn,

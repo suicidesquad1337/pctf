@@ -1,5 +1,6 @@
 [workspace]
 members = [
     "supervisor",
-    "web"
+    "web",
+    "cli",
 ]
